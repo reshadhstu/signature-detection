@@ -1,4 +1,4 @@
-# 🎯 Signature Detection with YOLO11
+# 🎯 Signature Detection with YOLOv11
 
 A high-performance signature detection system using YOLO11 architecture, achieving **99%+ accuracy** on signature detection tasks.
 
