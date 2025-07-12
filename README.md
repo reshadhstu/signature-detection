@@ -1,3 +1,5 @@
+# Signature Detection
+
 This project fine-tunes a YOLO object detection model on the Ultralytics Signature Detection dataset to locate and classify handwritten signatures within diverse document images accurately. By training and evaluating on a variety of real‐world contexts, the model becomes a powerful tool for smart document analysis.
 
 Key applications include:
