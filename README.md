@@ -1,8 +1,8 @@
 # 🎯 Signature Detection with YOLOv11
 
-A high-performance signature detection system using YOLO11 architecture, achieving **99%+ accuracy** on signature detection tasks.
+Assignment of a signature detection system using YOLOv11 architecture, achieving **99%+ accuracy** on (validation data) signature detection tasks.
 
-Kaggle Notebook: https://www.kaggle.com/code/reshad696/signature-detection-yolov11
+## Kaggle Notebook: https://www.kaggle.com/code/reshad696/signature-detection-yolov11
 
 ## � Performance Highlights
 - **mAP@0.5**: 99.13%
