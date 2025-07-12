@@ -2,6 +2,8 @@
 
 A high-performance signature detection system using YOLO11 architecture, achieving **99%+ accuracy** on signature detection tasks.
 
+Kaggle Notebook: https://www.kaggle.com/code/reshad696/signature-detection-yolov11
+
 ## � Performance Highlights
 - **mAP@0.5**: 99.13%
 - **mAP@0.5:0.95**: 91.14%
