@@ -1,0 +1,790 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+#   For a library or package, you might want to ignore these files since the code is
+#   intended to run in multiple environments; otherwise, check them in:
+# .python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+#Pipfile.lock
+
+# poetry
+#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
+#   This is especially recommended for binary packages to ensure reproducibility, and is more
+#   commonly ignored for libraries.
+#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
+#poetry.lock
+
+# pdm
+#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
+#pdm.lock
+#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
+#   in version control.
+#   https://pdm.fming.dev/#use-with-ide
+.pdm.toml
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+myassignmentenv/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
+#  be added to the global gitignore or merged into this project gitignore.  For a PyCharm
+#  project, it is recommended to add:
+#  .idea/
+#  However, if you choose to keep idea files, please exclude sensitive settings:
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Machine Learning / Data Science specific
+# Model files
+*.pt
+*.pth
+*.onnx
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.pb
+*.tflite
+*.mlmodel
+*.joblib
+
+# Training outputs and logs
+runs/
+outputs/
+logs/
+checkpoints/
+weights/
+models/
+experiments/
+mlruns/
+wandb/
+.neptune/
+.mlflow/
+
+# Data files (uncomment if you don't want to track data)
+# *.csv
+# *.json
+# *.parquet
+# *.feather
+# *.h5
+# *.hdf5
+# *.npz
+# *.npy
+
+# Large dataset folders (uncomment if datasets are large)
+# data/
+# datasets/
+# raw_data/
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Jupyter notebook outputs
+*.ipynb
+!**/notebooks/*.ipynb
+
+# TensorBoard logs
+tensorboard_logs/
+tb_logs/
+
+# Hydra logs
+.hydra/
+hydra_logs/
+
+# DVC (Data Version Control)
+.dvc/
+*.dvc
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Weights & Biases
+wandb/
+
+# Neptune
+.neptune/
+
+# Comet ML
+.comet/
+
+# Sacred
+sacred_runs/
+
+# Optuna
+optuna_logs/
+
+# Ray Tune
+ray_results/
+
+# Prefect
+.prefect/
+
+# Great Expectations
+great_expectations/uncommitted/
+
+# Evidence
+evidence/
+
+# Airflow
+airflow.cfg
+airflow.db
+logs/
+dags/__pycache__/
+dags/*.pyc
+
+# Docker
+Dockerfile.local
+docker-compose.override.yml
+
+# Kubernetes
+*.yaml.local
+*.yml.local
+
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfplan
+
+# IDE and editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Local configuration
+config.local.yaml
+config.local.yml
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Cache directories
+.cache/
+.tmp/
+.temp/
+
+# Profiling data
+*.prof
+*.profile
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# Pytest
+.pytest_cache/
+
+# Mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Bandit
+.bandit
+
+# Black
+.black
+
+# isort
+.isort.cfg
+
+# flake8
+.flake8
+
+# pylint
+.pylintrc
+
+# Pre-commit
+.pre-commit-config.yaml
+
+# Specific to this project
+# Keep dataset structure but ignore large files
+data/signature/train/images/*.jpg
+data/signature/train/images/*.png
+data/signature/val/images/*.jpg
+data/signature/val/images/*.png
+
+# But keep the directory structure and small config files
+!data/signature/data.yaml
+!data/signature/train/
+!data/signature/val/
+!data/signature/train/labels/
+!data/signature/val/labels/
+
+# Ignore training outputs
+runs/train/
+runs/val/
+runs/predict/
+runs/export/
+runs/detect/
+
+# Ignore model weights
+*.pt
+*.pth
+*.onnx
+best.pt
+last.pt
+yolo*.pt
+
+# Ignore evaluation outputs
+evaluation_results/
+confusion_matrix.png
+evaluation_report.*
+
+# Ignore prediction outputs
+predictions/
+prediction_*.png
+prediction_*.jpg
+
+# Ignore logs
+*.log
+logs/
+training.log
+evaluation.log
+prediction.log
+
+# Ignore temporary training files
+temp_frame_*.jpg
+temp_*.jpg
+temp_*.png
+
+# Ignore compiled Python files
+*.pyc
+__pycache__/
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+.directory
+
+# Ignore backup files
+*.bak
+*.backup
+*.old
+
+# Ignore compressed files
+*.zip
+*.tar.gz
+*.tar.bz2
+*.7z
+*.rar
+
+# Ignore video files (if used for testing)
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+
+# Ignore large image files for testing
+test_images/
+sample_images/
+demo_images/
+
+# Ignore documentation build files
+docs/_build/
+docs/build/
+site/
+
+# Ignore distribution files
+*.egg-info/
+dist/
+build/
+
+# Ignore notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore cache files
+__pycache__/
+*.py[cod]
+*$py.class
+.cache/
+
+# Ignore temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Ignore local configuration
+local_config.yaml
+local_settings.py
+.env.local
+
+# Ignore profiling files
+*.prof
+*.profile
+
+# Ignore test coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# Ignore security files
+*.key
+*.pem
+*.crt
+*.csr
+secrets.yaml
+secrets.yml
+
+# Ignore database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Ignore node modules (if using any web interface)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore package-lock files
+package-lock.json
+yarn.lock
+
+# Ignore built assets
+assets/
+static/
+media/
+
+# Ignore user-specific files
+.user
+.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore Visual Studio files
+.vs/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# Ignore JetBrains files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Ignore Emacs files
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Ignore Vim files
+*.swp
+*.swo
+*~
+.netrwhist
+tags
+
+# Ignore Sublime Text files
+*.sublime-workspace
+*.sublime-project
+
+# Ignore Atom files
+.atom/
+
+# Ignore Eclipse files
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# Ignore NetBeans files
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Ignore Gradle files
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Ignore Maven files
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Ignore SBT files
+.sbt
+project/target/
+target/
+.bloop/
+.metals/
+.vscode/
+
+# Ignore R files
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Ignore Julia files
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+deps/deps.jl
+
+# Ignore Go files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+
+# Ignore Rust files
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# Ignore Swift files
+## Build generated
+build/
+DerivedData/
+## Various settings
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+## Obj-C/Swift specific
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+.build/
+## Swift Package Manager
+.build/
+Package.pins
+Package.resolved
+*.xcodeproj
+## CocoaPods
+Pods/
+## Carthage
+Carthage/Build/
+## fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Ignore C/C++ files
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+*.dSYM/
+*.su
+*.idb
+*.pdb
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.ncb
+*.sdf
+*.opensdf
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.rc
+*.res
+*.def
+*.exp
+*.manifest
+*.map
+*.tlog
+*.lastbuildstate
+*.idb
+*.pdb
+*.lib
+*.exp
+*.ilk
+*.embed.manifest
+*.embed.manifest.res
+*.intermediate.manifest
+*.cache
+*.log
+*.tlog
+*.sbr
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.VC.opendb
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/

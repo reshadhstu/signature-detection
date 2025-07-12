@@ -1,0 +1,32 @@
+# Deep Learning Framework
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Computer Vision
+opencv-python>=4.8.0
+Pillow>=9.0.0
+
+# Data Processing
+numpy>=1.24.0
+pandas>=1.5.0
+
+# YOLO Model
+ultralytics>=8.0.0
+
+# Configuration
+PyYAML>=6.0
+
+# Visualization
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# Progress bars
+tqdm>=4.64.0
+
+# Jupyter (for notebook development)
+jupyter>=1.0.0
+notebook>=6.4.0
+
+# Utilities
+pathlib2>=2.3.0
+scikit-learn>=1.2.0

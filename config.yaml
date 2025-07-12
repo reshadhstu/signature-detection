@@ -1,0 +1,177 @@
+# Signature Detection Configuration
+# This configuration file contains all parameters for training, evaluation, and inference
+
+# Data Configuration
+data:
+  # Path to YOLO data configuration file
+  config_path: "data/signature/data.yaml"
+  
+  # Dataset paths (automatically loaded from data.yaml)
+  train_images: "data/signature/train/images"
+  train_labels: "data/signature/train/labels"
+  val_images: "data/signature/val/images"
+  val_labels: "data/signature/val/labels"
+  
+  # Data augmentation parameters
+  augmentation:
+    hsv_h: 0.015        # image HSV-Hue augmentation (fraction)
+    hsv_s: 0.7          # image HSV-Saturation augmentation (fraction)
+    hsv_v: 0.4          # image HSV-Value augmentation (fraction)
+    degrees: 0.0        # image rotation (+/- deg)
+    translate: 0.1      # image translation (+/- fraction)
+    scale: 0.5          # image scale (+/- gain)
+    shear: 0.0          # image shear (+/- deg)
+    perspective: 0.0    # image perspective (+/- fraction), range 0-0.001
+    flipud: 0.0         # image flip up-down (probability)
+    fliplr: 0.5         # image flip left-right (probability)
+    mosaic: 1.0         # image mosaic (probability)
+    mixup: 0.0          # image mixup (probability)
+    copy_paste: 0.0     # copy paste (probability)
+
+# Model Configuration
+model:
+  # Model architecture (yolo11n, yolo11s, yolo11m, yolo11l, yolo11x)
+  size: "n"
+  architecture: "yolo11n.yaml"
+  pretrained: "yolo11n.pt"
+  
+  # Model parameters
+  num_classes: 1
+  class_names: ["signature"]
+  
+  # Model specific settings
+  depth_multiple: 0.33  # model depth multiple
+  width_multiple: 0.25  # layer channel multiple
+
+# Training Configuration
+train:
+  # Basic training parameters
+  epochs: 100
+  batch_size: 16
+  img_size: 640
+  learning_rate: 0.01
+  
+  # Optimizer settings
+  optimizer: "AdamW"      # optimizer (SGD, Adam, AdamW, etc.)
+  lr_scheduler: "auto"    # learning rate scheduler (auto, constant, cosine, etc.)
+  momentum: 0.937         # SGD momentum/Adam beta1
+  weight_decay: 0.0005    # optimizer weight decay
+  
+  # Training strategy
+  patience: 50            # early stopping patience (epochs)
+  save_period: -1         # save checkpoint every x epochs (-1 to disable)
+  
+  # Loss function weights
+  box_loss_gain: 7.5      # box loss gain
+  cls_loss_gain: 0.5      # cls loss gain
+  dfl_loss_gain: 1.5      # dfl loss gain
+  
+  # Regularization
+  label_smoothing: 0.0    # label smoothing (fraction)
+  dropout: 0.0            # dropout rate
+  
+  # Multi-scale training
+  multi_scale: false      # vary img-size +/- 50%
+  
+  # Advanced training options
+  warmup_epochs: 3        # warmup epochs (fractions ok)
+  warmup_momentum: 0.8    # warmup initial momentum
+  warmup_bias_lr: 0.1     # warmup initial bias lr
+  
+  # Validation during training
+  val_during_train: true  # validate during training
+  val_freq: 1            # validation frequency (epochs)
+  
+  # Device and performance
+  device: "auto"          # device (auto, cpu, cuda:0, etc.)
+  workers: 8              # number of worker threads for data loading
+  
+  # Reproducibility
+  seed: 42                # random seed for reproducibility
+  deterministic: true     # whether to use deterministic algorithms
+
+# Evaluation Configuration
+eval:
+  # Evaluation thresholds
+  conf_thresh: 0.25       # confidence threshold
+  iou_thresh: 0.45        # IoU threshold for NMS
+  
+  # Evaluation metrics
+  iou_thresholds: [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+  
+  # Evaluation options
+  max_det: 300            # maximum number of detections per image
+  half_precision: false   # use half precision for faster inference
+  
+  # Visualization options
+  save_txt: true          # save results to *.txt
+  save_conf: true         # save confidences in --save-txt labels
+  save_json: true         # save a COCO-JSON results file
+  save_plots: true        # save plots and images during validation
+  
+  # Analysis options
+  analyze_predictions: true    # analyze predictions on sample images
+  num_analysis_samples: 20     # number of samples for analysis
+  confusion_matrix: true       # generate confusion matrix
+
+# Inference Configuration
+inference:
+  # Prediction thresholds
+  conf_thresh: 0.25       # confidence threshold
+  iou_thresh: 0.45        # IoU threshold for NMS
+  
+  # Prediction options
+  max_det: 300            # maximum number of detections per image
+  classes: null           # filter by class (list of class indices)
+  agnostic_nms: false     # class-agnostic NMS
+  
+  # Visualization options
+  show_labels: true       # show class labels
+  show_conf: true         # show confidence scores
+  line_thickness: 2       # bounding box thickness
+  
+  # Output options
+  save_txt: false         # save results to *.txt
+  save_conf: false        # save confidences in --save-txt labels
+  save_crop: false        # save cropped prediction boxes
+  save_img: true          # save prediction images
+
+# Logging and Output Configuration
+logging:
+  # Logging levels: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: "INFO"
+  
+  # Output directories
+  base_dir: "runs"
+  train_dir: "runs/train"
+  val_dir: "runs/val"
+  predict_dir: "runs/predict"
+  
+  # Logging options
+  log_to_file: true       # save logs to file
+  log_to_console: true    # print logs to console
+  
+  # Visualization options
+  plot_training: true     # plot training curves
+  plot_predictions: true  # plot prediction results
+  plot_confusion_matrix: true  # plot confusion matrix
+
+# Advanced Configuration
+advanced:
+  # Memory optimization
+  cache_images: false     # cache images for faster training
+  
+  # Distributed training
+  world_size: 1          # number of GPUs
+  rank: 0                # GPU rank
+  
+  # Export options
+  export_formats: ["torchscript", "onnx"]  # export formats
+  
+  # Debugging options
+  verbose: true          # verbose output
+  profile: false         # profile model speed
+  
+  # Experimental features
+  use_amp: true          # use automatic mixed precision
+  use_ema: false         # use exponential moving average
