@@ -12,185 +12,113 @@ logger = logging.getLogger(__name__)
 
 class SignatureDetectionModel:
     """
-    Wrapper class for YOLO model specifically designed for signature detection.
+    YOLO model wrapper for signature detection.
     
-    This class provides a clean interface for training, evaluation, and inference
-    with YOLO models for signature detection tasks.
+    Provides methods for training, evaluation, and inference.
     """
     
-    def __init__(self, model_size: str = 'n', num_classes: int = 1, class_names: Optional[List[str]] = None):
+    def __init__(self, model_name: str = 'yolo11n', config: Optional[Dict[str, Any]] = None):
         """
-        Initialize the SignatureDetectionModel.
+        Initialize the signature detection model.
         
         Args:
-            model_size: Size of the YOLO model ('n', 's', 'm', 'l', 'x')
-            num_classes: Number of classes for detection
-            class_names: List of class names
+            model_name: Name of the YOLO model (e.g., 'yolo11n', 'yolo11s', 'yolo11m')
+            config: Optional configuration dictionary
         """
-        self.model_size = model_size
-        self.num_classes = num_classes
-        self.class_names = class_names or ['signature']
+        self.model_name = model_name
+        self.config = config or {}
         self.model = None
         self.is_trained = False
         
         # Initialize model
         self._initialize_model()
+        
+        logger.info(f"SignatureDetectionModel initialized with {model_name}")
     
-    def _initialize_model(self) -> None:
+    def _initialize_model(self):
         """Initialize the YOLO model."""
         try:
-            model_name = f"yolo11{self.model_size}.pt"
-            self.model = YOLO(model_name)
-            
-            # Configure model for signature detection
-            if hasattr(self.model.model, 'nc'):
-                self.model.model.nc = self.num_classes
-            if hasattr(self.model.model, 'names'):
-                self.model.model.names = {i: name for i, name in enumerate(self.class_names)}
-            
-            logger.info(f"Model initialized: {model_name}")
-            logger.info(f"Number of classes: {self.num_classes}")
-            logger.info(f"Class names: {self.class_names}")
+            # Load pre-trained model
+            model_path = f"{self.model_name}.pt"
+            self.model = YOLO(model_path)
+            logger.info(f"Model loaded: {model_path}")
             
         except Exception as e:
             logger.error(f"Failed to initialize model: {str(e)}")
             raise
     
     def train(self, 
-              data_config: str, 
-              epochs: int = 100, 
-              batch_size: int = 16,
+              data_yaml: str, 
+              epochs: int = 50, 
+              batch_size: int = 8,
               img_size: int = 640,
-              learning_rate: float = 0.01,
-              patience: int = 50,
-              save_dir: str = "runs/train",
+              lr0: float = 0.001,
               **kwargs) -> Dict[str, Any]:
         """
         Train the signature detection model.
         
         Args:
-            data_config: Path to YOLO data configuration file
+            data_yaml: Path to YOLO data configuration file
             epochs: Number of training epochs
             batch_size: Batch size for training
-            img_size: Image size for training
-            learning_rate: Learning rate
-            patience: Early stopping patience
-            save_dir: Directory to save training results
+            img_size: Input image size
+            lr0: Initial learning rate
             **kwargs: Additional training parameters
             
         Returns:
             Training results dictionary
         """
+        if self.model is None:
+            raise ValueError("Model not initialized")
+        
+        # Default training parameters optimized for signature detection
+        train_params = {
+            'data': data_yaml,
+            'epochs': epochs,
+            'batch': batch_size,
+            'imgsz': img_size,
+            'lr0': lr0,
+            'momentum': 0.937,
+            'weight_decay': 0.0005,
+            'warmup_epochs': 3,
+            'warmup_momentum': 0.8,
+            'warmup_bias_lr': 0.1,
+            'box': 7.5,  # Box loss gain
+            'cls': 0.5,  # Classification loss gain
+            'dfl': 1.5,  # Distribution focal loss gain
+            'optimizer': 'AdamW',
+            'cos_lr': True,
+            'close_mosaic': 10,
+            'amp': True,
+            'single_cls': True,  # Single class detection
+            'patience': 15,
+            'save_period': 10,
+            'val': True,
+            'plots': True,
+            'save': True,
+            'verbose': True,
+            'seed': 42,
+            'deterministic': True,
+            'device': 'cuda' if torch.cuda.is_available() else 'cpu',
+            'workers': 4,
+            'cache': False,
+            'project': 'runs/train',
+            'name': 'signature_detection',
+            'exist_ok': True,
+        }
+        
+        # Update with any additional parameters
+        train_params.update(kwargs)
+        
+        logger.info("Starting training with optimized parameters...")
+        logger.info(f"Training parameters: {train_params}")
+        
         try:
-            logger.info("Starting model training...")
-            logger.info(f"Data config: {data_config}")
-            logger.info(f"Epochs: {epochs}, Batch size: {batch_size}")
-            logger.info(f"Image size: {img_size}, Learning rate: {learning_rate}")
-            
-            # Training parameters
-            train_params = {
-                'data': data_config,
-                'epochs': epochs,
-                'batch': batch_size,
-                'imgsz': img_size,
-                'lr0': learning_rate,
-                'patience': patience,
-                'project': save_dir,
-                'name': f'signature_detection_{self.model_size}',
-                'exist_ok': True,
-                'pretrained': True,
-                'optimizer': 'AdamW',
-                'verbose': True,
-                'seed': 42,
-                'deterministic': True,
-                'single_cls': self.num_classes == 1,
-                'rect': False,
-                'cos_lr': True,
-                'close_mosaic': 10,
-                'resume': False,
-                'amp': True,
-                'fraction': 1.0,
-                'profile': False,
-                'freeze': None,
-                'multi_scale': True,
-                'overlap_mask': True,
-                'mask_ratio': 4,
-                'dropout': 0.0,
-                'val': True,
-                'split': 'val',
-                'save_json': False,
-                'save_hybrid': False,
-                'conf': None,
-                'iou': 0.7,
-                'max_det': 300,
-                'half': False,
-                'dnn': False,
-                'plots': True,
-                'source': None,
-                'show': False,
-                'save_txt': False,
-                'save_conf': False,
-                'save_crop': False,
-                'show_labels': True,
-                'show_conf': True,
-                'vid_stride': 1,
-                'stream_buffer': False,
-                'line_width': None,
-                'visualize': False,
-                'augment': False,
-                'agnostic_nms': False,
-                'classes': None,
-                'retina_masks': False,
-                'boxes': True,
-                'format': 'torchscript',
-                'keras': False,
-                'optimize': False,
-                'int8': False,
-                'dynamic': False,
-                'simplify': False,
-                'opset': None,
-                'workspace': 4,
-                'nms': False,
-                'lr_scheduler': 'auto',
-                'save_period': -1,
-                'cache': False,
-                'device': None,
-                'workers': 8,
-                'image_weights': False,
-                'rect': False,
-                'multi_scale': False,
-                'label_smoothing': 0.0,
-                'box': 7.5,
-                'cls': 0.5,
-                'dfl': 1.5,
-                'pose': 12.0,
-                'kobj': 1.0,
-                'hsv_h': 0.015,
-                'hsv_s': 0.7,
-                'hsv_v': 0.4,
-                'degrees': 0.0,
-                'translate': 0.1,
-                'scale': 0.5,
-                'shear': 0.0,
-                'perspective': 0.0,
-                'flipud': 0.0,
-                'fliplr': 0.5,
-                'bgr': 0.0,
-                'mosaic': 1.0,
-                'mixup': 0.0,
-                'copy_paste': 0.0,
-                'auto_augment': 'randaugment',
-                'erasing': 0.4,
-                'crop_fraction': 1.0,
-                **kwargs
-            }
-            
-            # Start training
+            # Train the model
             results = self.model.train(**train_params)
-            
             self.is_trained = True
-            logger.info("Training completed successfully!")
             
+            logger.info("Training completed successfully!")
             return results
             
         except Exception as e:
@@ -198,45 +126,63 @@ class SignatureDetectionModel:
             raise
     
     def evaluate(self, 
-                 data_config: str, 
-                 split: str = 'val',
+                 data_yaml: str = None, 
                  conf_threshold: float = 0.25,
                  iou_threshold: float = 0.45,
                  **kwargs) -> Dict[str, Any]:
         """
-        Evaluate the model on validation/test data.
+        Evaluate the model on validation data.
         
         Args:
-            data_config: Path to YOLO data configuration file
-            split: Dataset split to evaluate on
-            conf_threshold: Confidence threshold
+            data_yaml: Path to YOLO data configuration file
+            conf_threshold: Confidence threshold for predictions
             iou_threshold: IoU threshold for NMS
             **kwargs: Additional evaluation parameters
             
         Returns:
             Evaluation results dictionary
         """
+        if self.model is None:
+            raise ValueError("Model not initialized")
+        
+        # Default evaluation parameters
+        eval_params = {
+            'conf': conf_threshold,
+            'iou': iou_threshold,
+            'device': 'cuda' if torch.cuda.is_available() else 'cpu',
+            'plots': True,
+            'save_json': True,
+            'verbose': True,
+        }
+        
+        # Add data path if provided
+        if data_yaml:
+            eval_params['data'] = data_yaml
+        
+        # Update with additional parameters
+        eval_params.update(kwargs)
+        
+        logger.info("Starting evaluation...")
+        
         try:
-            logger.info(f"Evaluating model on {split} split...")
-            
-            eval_params = {
-                'data': data_config,
-                'split': split,
-                'conf': conf_threshold,
-                'iou': iou_threshold,
-                'verbose': True,
-                'save_json': True,
-                'save_hybrid': False,
-                'half': False,
-                'dnn': False,
-                'plots': True,
-                **kwargs
-            }
-            
+            # Run evaluation
             results = self.model.val(**eval_params)
             
+            # Extract key metrics
+            metrics = {
+                'mAP@0.5': float(results.box.map50),
+                'mAP@0.5:0.95': float(results.box.map),
+                'precision': float(results.box.mp),
+                'recall': float(results.box.mr),
+            }
+            
             logger.info("Evaluation completed successfully!")
-            return results
+            logger.info(f"Metrics: {metrics}")
+            
+            return {
+                'results': results,
+                'metrics': metrics
+            }
             
         except Exception as e:
             logger.error(f"Evaluation failed: {str(e)}")
@@ -247,148 +193,169 @@ class SignatureDetectionModel:
                 conf_threshold: float = 0.25,
                 iou_threshold: float = 0.45,
                 save_results: bool = False,
-                save_dir: str = "runs/predict",
                 **kwargs) -> List[Dict[str, Any]]:
         """
-        Make predictions on new data.
+        Run inference on images.
         
         Args:
-            source: Path to image/video/directory
-            conf_threshold: Confidence threshold
+            source: Path to image(s) or directory
+            conf_threshold: Confidence threshold for predictions
             iou_threshold: IoU threshold for NMS
             save_results: Whether to save prediction results
-            save_dir: Directory to save results
             **kwargs: Additional prediction parameters
             
         Returns:
             List of prediction results
         """
+        if self.model is None:
+            raise ValueError("Model not initialized")
+        
+        # Default prediction parameters
+        pred_params = {
+            'conf': conf_threshold,
+            'iou': iou_threshold,
+            'device': 'cuda' if torch.cuda.is_available() else 'cpu',
+            'save': save_results,
+            'verbose': True,
+        }
+        
+        # Update with additional parameters
+        pred_params.update(kwargs)
+        
+        logger.info(f"Running inference on: {source}")
+        
         try:
-            logger.info(f"Making predictions on: {source}")
-            
-            predict_params = {
-                'source': source,
-                'conf': conf_threshold,
-                'iou': iou_threshold,
-                'save': save_results,
-                'project': save_dir,
-                'name': 'signature_predictions',
-                'exist_ok': True,
-                'show_labels': True,
-                'show_conf': True,
-                'visualize': False,
-                'augment': False,
-                'agnostic_nms': False,
-                'classes': None,
-                'retina_masks': False,
-                'boxes': True,
-                'line_width': None,
-                'half': False,
-                'dnn': False,
-                'vid_stride': 1,
-                'stream_buffer': False,
-                **kwargs
-            }
-            
-            results = self.model.predict(**predict_params)
+            # Run prediction
+            results = self.model(source, **pred_params)
             
             # Process results
-            processed_results = []
+            predictions = []
             for result in results:
-                processed_result = {
+                pred_data = {
                     'image_path': result.path,
-                    'image_shape': result.orig_shape,
-                    'boxes': result.boxes.xyxy.cpu().numpy() if result.boxes is not None else [],
-                    'confidences': result.boxes.conf.cpu().numpy() if result.boxes is not None else [],
-                    'classes': result.boxes.cls.cpu().numpy() if result.boxes is not None else [],
-                    'class_names': [self.class_names[int(cls)] for cls in result.boxes.cls.cpu().numpy()] if result.boxes is not None else []
+                    'detections': [],
+                    'confidence_scores': [],
+                    'boxes': []
                 }
-                processed_results.append(processed_result)
+                
+                if len(result.boxes) > 0:
+                    for box in result.boxes:
+                        pred_data['detections'].append('signature')
+                        pred_data['confidence_scores'].append(float(box.conf))
+                        pred_data['boxes'].append(box.xyxy.cpu().numpy().tolist())
+                
+                predictions.append(pred_data)
             
-            logger.info(f"Predictions completed for {len(processed_results)} images")
-            return processed_results
+            logger.info(f"Inference completed. Found {len(predictions)} results.")
+            return predictions
             
         except Exception as e:
             logger.error(f"Prediction failed: {str(e)}")
             raise
     
-    def save_model(self, save_path: str) -> None:
+    def save_model(self, save_path: str):
         """
         Save the trained model.
         
         Args:
             save_path: Path to save the model
         """
+        if self.model is None:
+            raise ValueError("Model not initialized")
+        
         try:
+            # Create directory if it doesn't exist
             Path(save_path).parent.mkdir(parents=True, exist_ok=True)
+            
+            # Save model
             self.model.save(save_path)
             logger.info(f"Model saved to: {save_path}")
+            
         except Exception as e:
             logger.error(f"Failed to save model: {str(e)}")
             raise
     
-    def load_model(self, model_path: str) -> None:
+    def load_model(self, model_path: str):
         """
-        Load a trained model.
+        Load a pre-trained model.
         
         Args:
-            model_path: Path to the saved model
+            model_path: Path to the model file
         """
         try:
             self.model = YOLO(model_path)
             self.is_trained = True
             logger.info(f"Model loaded from: {model_path}")
+            
         except Exception as e:
             logger.error(f"Failed to load model: {str(e)}")
             raise
     
+    def export_model(self, 
+                     format: str = 'onnx',
+                     **kwargs) -> str:
+        """
+        Export model to different formats.
+        
+        Args:
+            format: Export format ('onnx', 'torchscript', 'tflite', etc.)
+            **kwargs: Additional export parameters
+            
+        Returns:
+            Path to exported model
+        """
+        if self.model is None:
+            raise ValueError("Model not initialized")
+        
+        logger.info(f"Exporting model to {format} format...")
+        
+        try:
+            exported_path = self.model.export(format=format, **kwargs)
+            logger.info(f"Model exported to: {exported_path}")
+            return exported_path
+            
+        except Exception as e:
+            logger.error(f"Export failed: {str(e)}")
+            raise
+    
     def get_model_info(self) -> Dict[str, Any]:
         """
-        Get information about the model.
+        Get model information and statistics.
         
         Returns:
             Dictionary containing model information
         """
-        return {
-            'model_size': self.model_size,
-            'num_classes': self.num_classes,
-            'class_names': self.class_names,
-            'is_trained': self.is_trained,
-            'model_type': 'YOLOv11' if self.model else None
-        }
-    
-    @classmethod
-    def from_config(cls, config_path: str) -> 'SignatureDetectionModel':
-        """
-        Create model from configuration file.
+        if self.model is None:
+            return {"error": "Model not initialized"}
         
-        Args:
-            config_path: Path to configuration file
+        try:
+            # Get model info
+            info = {
+                'model_name': self.model_name,
+                'is_trained': self.is_trained,
+                'device': next(self.model.model.parameters()).device if hasattr(self.model, 'model') else 'unknown',
+                'num_classes': 1,  # Signature detection is single class
+                'input_size': 640,
+                'model_size': f"~{self._get_model_size()}MB"
+            }
             
-        Returns:
-            SignatureDetectionModel instance
-        """
-        with open(config_path, 'r') as f:
-            config = yaml.safe_load(f)
-        
-        model_config = config.get('model', {})
-        model_size = model_config.get('architecture', 'yolo11n.pt').replace('yolo11', '').replace('.pt', '').replace('.yaml', '')
-        
-        return cls(
-            model_size=model_size,
-            num_classes=1,  # For signature detection
-            class_names=['signature']
-        )
-
-
-def build_model(config_path: str) -> SignatureDetectionModel:
-    """
-    Build model from configuration file (legacy function for backward compatibility).
+            return info
+            
+        except Exception as e:
+            logger.error(f"Failed to get model info: {str(e)}")
+            return {"error": str(e)}
     
-    Args:
-        config_path: Path to configuration file
-        
-    Returns:
-        SignatureDetectionModel instance
-    """
-    return SignatureDetectionModel.from_config(config_path)
+    def _get_model_size(self) -> float:
+        """Estimate model size in MB."""
+        if self.model_name == 'yolo11n':
+            return 6.0
+        elif self.model_name == 'yolo11s':
+            return 22.0
+        elif self.model_name == 'yolo11m':
+            return 50.0
+        elif self.model_name == 'yolo11l':
+            return 87.0
+        elif self.model_name == 'yolo11x':
+            return 143.0
+        else:
+            return 25.0  # Default estimate

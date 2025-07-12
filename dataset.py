@@ -14,10 +14,9 @@ logger = logging.getLogger(__name__)
 
 class SignatureDataset(Dataset):
     """
-    Custom dataset class for YOLO signature detection.
+    Dataset for signature detection using YOLO format.
     
-    This class handles loading images and their corresponding YOLO format labels,
-    converting them to the appropriate format for training/evaluation.
+    Loads images and bounding box labels for training/validation.
     """
     
     def __init__(self, 
@@ -164,7 +163,7 @@ class SignatureDataset(Dataset):
             return boxes, classes
         
         try:
-            with open(label_path, 'r') as f:
+            with open(label_path, 'r', encoding='utf-8') as f:
                 for line in f.read().strip().splitlines():
                     if not line.strip():
                         continue
@@ -217,7 +216,7 @@ class SignatureDataset(Dataset):
                 continue
             
             try:
-                with open(label_path, 'r') as f:
+                with open(label_path, 'r', encoding='utf-8') as f:
                     for line in f.read().strip().splitlines():
                         if not line.strip():
                             continue
@@ -234,19 +233,27 @@ class SignatureDataset(Dataset):
     @staticmethod
     def create_from_config(config_path: str, split: str = 'train') -> 'SignatureDataset':
         """
-        Create dataset from YOLO configuration file.
+        Create dataset from main configuration file.
         
         Args:
-            config_path: Path to the YOLO data configuration file
+            config_path: Path to the main configuration file (config.yaml)
             split: Dataset split ('train' or 'val')
             
         Returns:
             SignatureDataset instance
         """
-        with open(config_path, 'r') as f:
-            config = yaml.safe_load(f)
+        # Load main config
+        with open(config_path, 'r', encoding='utf-8') as f:
+            main_config = yaml.safe_load(f)
         
-        dataset_root = Path(config['path'])
+        # Get data config path
+        data_config_path = main_config['data']['config_path']
+        
+        # Load YOLO data config
+        with open(data_config_path, 'r', encoding='utf-8') as f:
+            data_config = yaml.safe_load(f)
+        
+        dataset_root = Path(data_config['path'])
         img_dir = dataset_root / f"{split}/images"
         label_dir = dataset_root / f"{split}/labels"
         

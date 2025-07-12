@@ -1,177 +1,142 @@
-# Signature Detection Configuration
-# This configuration file contains all parameters for training, evaluation, and inference
+# Configuration file for signature detection model
+# This file contains all training and evaluation parameters
 
-# Data Configuration
-data:
-  # Path to YOLO data configuration file
-  config_path: "data/signature/data.yaml"
-  
-  # Dataset paths (automatically loaded from data.yaml)
-  train_images: "data/signature/train/images"
-  train_labels: "data/signature/train/labels"
-  val_images: "data/signature/val/images"
-  val_labels: "data/signature/val/labels"
-  
-  # Data augmentation parameters
-  augmentation:
-    hsv_h: 0.015        # image HSV-Hue augmentation (fraction)
-    hsv_s: 0.7          # image HSV-Saturation augmentation (fraction)
-    hsv_v: 0.4          # image HSV-Value augmentation (fraction)
-    degrees: 0.0        # image rotation (+/- deg)
-    translate: 0.1      # image translation (+/- fraction)
-    scale: 0.5          # image scale (+/- gain)
-    shear: 0.0          # image shear (+/- deg)
-    perspective: 0.0    # image perspective (+/- fraction), range 0-0.001
-    flipud: 0.0         # image flip up-down (probability)
-    fliplr: 0.5         # image flip left-right (probability)
-    mosaic: 1.0         # image mosaic (probability)
-    mixup: 0.0          # image mixup (probability)
-    copy_paste: 0.0     # copy paste (probability)
-
-# Model Configuration
 model:
-  # Model architecture (yolo11n, yolo11s, yolo11m, yolo11l, yolo11x)
-  size: "n"
-  architecture: "yolo11n.yaml"
-  pretrained: "yolo11n.pt"
+  architecture: "yolo11n.pt"  # Base YOLO model
+  name: "signature_detector"  # Model name
   
-  # Model parameters
+training:
+  # Core training parameters
+  epochs: 5  # Minimal for low-end devices (use 50 for full training)
+  batch_size: 4  # Small batch for low-end devices (use 16-32 for full training)
+  learning_rate: 0.001
+  
+  # Image settings
+  image_size: 640
+  
+  # YOLO-specific parameters
+  single_cls: true  # Single class detection (signature)
+  
+  # Loss weights (optimized for signature detection)
+  box_loss_weight: 7.5
+  cls_loss_weight: 0.5
+  dfl_loss_weight: 1.5
+  
+  # Optimizer settings
+  optimizer: "AdamW"
+  lr_scheduler: "cosine"
+  warmup_epochs: 3
+  warmup_momentum: 0.8
+  warmup_bias_lr: 0.1
+  
+  # Regularization
+  weight_decay: 0.0005
+  momentum: 0.937
+  
+  # Data augmentation
+  hsv_h: 0.015    # Hue augmentation
+  hsv_s: 0.7      # Saturation augmentation
+  hsv_v: 0.4      # Value augmentation
+  degrees: 0.0    # Rotation (disabled for signatures)
+  translate: 0.1  # Translation
+  scale: 0.5      # Scale augmentation
+  shear: 0.0      # Shear (disabled for signatures)
+  perspective: 0.0 # Perspective (disabled for signatures)
+  flipud: 0.0     # Vertical flip (disabled)
+  fliplr: 0.5     # Horizontal flip
+  mixup: 0.0      # Mixup augmentation (disabled)
+  copy_paste: 0.0 # Copy-paste augmentation (disabled)
+  
+  # Early stopping
+  patience: 10    # Early stopping patience
+  
+  # Validation
+  val_freq: 1     # Validation frequency (every epoch)
+  
+  # Device settings
+  device: "auto"  # Use GPU if available, otherwise CPU
+  workers: 4      # Number of data loading workers
+
+data:
+  config_path: "data/signature/data.yaml"
   num_classes: 1
   class_names: ["signature"]
   
-  # Model specific settings
-  depth_multiple: 0.33  # model depth multiple
-  width_multiple: 0.25  # layer channel multiple
+  # Data paths (relative to data.yaml)
+  train_path: "train"
+  val_path: "val"
+  
+  # Data validation
+  verify_images: true
+  cache: false    # Disable caching for now
 
-# Training Configuration
-train:
-  # Basic training parameters
-  epochs: 100
-  batch_size: 16
-  img_size: 640
-  learning_rate: 0.01
+evaluation:
+  # Confidence and IoU thresholds
+  conf_threshold: 0.25
+  iou_threshold: 0.5
   
-  # Optimizer settings
-  optimizer: "AdamW"      # optimizer (SGD, Adam, AdamW, etc.)
-  lr_scheduler: "auto"    # learning rate scheduler (auto, constant, cosine, etc.)
-  momentum: 0.937         # SGD momentum/Adam beta1
-  weight_decay: 0.0005    # optimizer weight decay
+  # Evaluation settings
+  save_json: true
+  save_plots: true
+  save_report: true
   
-  # Training strategy
-  patience: 50            # early stopping patience (epochs)
-  save_period: -1         # save checkpoint every x epochs (-1 to disable)
+  # Testing settings
+  test_individual_images: true
+  num_test_images: 10
   
-  # Loss function weights
-  box_loss_gain: 7.5      # box loss gain
-  cls_loss_gain: 0.5      # cls loss gain
-  dfl_loss_gain: 1.5      # dfl loss gain
-  
-  # Regularization
-  label_smoothing: 0.0    # label smoothing (fraction)
-  dropout: 0.0            # dropout rate
-  
-  # Multi-scale training
-  multi_scale: false      # vary img-size +/- 50%
-  
-  # Advanced training options
-  warmup_epochs: 3        # warmup epochs (fractions ok)
-  warmup_momentum: 0.8    # warmup initial momentum
-  warmup_bias_lr: 0.1     # warmup initial bias lr
-  
-  # Validation during training
-  val_during_train: true  # validate during training
-  val_freq: 1            # validation frequency (epochs)
-  
-  # Device and performance
-  device: "auto"          # device (auto, cpu, cuda:0, etc.)
-  workers: 8              # number of worker threads for data loading
-  
-  # Reproducibility
-  seed: 42                # random seed for reproducibility
-  deterministic: true     # whether to use deterministic algorithms
+  # Metrics to track
+  metrics:
+    - "mAP@0.5"
+    - "mAP@0.5:0.95"
+    - "precision"
+    - "recall"
+    - "F1"
 
-# Evaluation Configuration
-eval:
-  # Evaluation thresholds
-  conf_thresh: 0.25       # confidence threshold
-  iou_thresh: 0.45        # IoU threshold for NMS
-  
-  # Evaluation metrics
-  iou_thresholds: [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
-  
-  # Evaluation options
-  max_det: 300            # maximum number of detections per image
-  half_precision: false   # use half precision for faster inference
-  
-  # Visualization options
-  save_txt: true          # save results to *.txt
-  save_conf: true         # save confidences in --save-txt labels
-  save_json: true         # save a COCO-JSON results file
-  save_plots: true        # save plots and images during validation
-  
-  # Analysis options
-  analyze_predictions: true    # analyze predictions on sample images
-  num_analysis_samples: 20     # number of samples for analysis
-  confusion_matrix: true       # generate confusion matrix
-
-# Inference Configuration
 inference:
-  # Prediction thresholds
-  conf_thresh: 0.25       # confidence threshold
-  iou_thresh: 0.45        # IoU threshold for NMS
+  # Inference parameters
+  conf_threshold: 0.5   # Higher confidence for production
+  iou_threshold: 0.5
+  max_detections: 100
   
-  # Prediction options
-  max_det: 300            # maximum number of detections per image
-  classes: null           # filter by class (list of class indices)
-  agnostic_nms: false     # class-agnostic NMS
-  
-  # Visualization options
-  show_labels: true       # show class labels
-  show_conf: true         # show confidence scores
-  line_thickness: 2       # bounding box thickness
-  
-  # Output options
-  save_txt: false         # save results to *.txt
-  save_conf: false        # save confidences in --save-txt labels
-  save_crop: false        # save cropped prediction boxes
-  save_img: true          # save prediction images
+  # Output settings
+  save_predictions: true
+  save_visualizations: true
+  output_dir: "predictions"
 
-# Logging and Output Configuration
 logging:
-  # Logging levels: DEBUG, INFO, WARNING, ERROR, CRITICAL
   level: "INFO"
+  log_file: "training.log"
   
-  # Output directories
-  base_dir: "runs"
-  train_dir: "runs/train"
-  val_dir: "runs/val"
-  predict_dir: "runs/predict"
-  
-  # Logging options
-  log_to_file: true       # save logs to file
-  log_to_console: true    # print logs to console
-  
-  # Visualization options
-  plot_training: true     # plot training curves
-  plot_predictions: true  # plot prediction results
-  plot_confusion_matrix: true  # plot confusion matrix
+  # Weights & Biases integration (optional)
+  wandb:
+    enabled: false
+    project: "signature-detection"
+    entity: null
+    
+  # TensorBoard logging
+  tensorboard:
+    enabled: true
+    log_dir: "runs"
 
-# Advanced Configuration
+# Environment settings
+environment:
+  random_seed: 42
+  deterministic: false  # Set to true for reproducible results (slower)
+  
+# Paths
+paths:
+  models_dir: "models"
+  results_dir: "results"
+  logs_dir: "logs"
+  
+# Advanced settings
 advanced:
-  # Memory optimization
-  cache_images: false     # cache images for faster training
+  # Model pruning (experimental)
+  pruning:
+    enabled: false
+    sparsity: 0.3
   
-  # Distributed training
-  world_size: 1          # number of GPUs
-  rank: 0                # GPU rank
-  
-  # Export options
-  export_formats: ["torchscript", "onnx"]  # export formats
-  
-  # Debugging options
-  verbose: true          # verbose output
-  profile: false         # profile model speed
-  
-  # Experimental features
-  use_amp: true          # use automatic mixed precision
-  use_ema: false         # use exponential moving average
+  # Quantization (experimental)
+  quantization:
+    enabled: false
+    backend: "fbgemm"
